@@ -18,7 +18,7 @@ use windows::Win32::Foundation::{self, HANDLE, STILL_ACTIVE};
 use windows::Win32::System::Diagnostics::ToolHelp::{
     CreateToolhelp32Snapshot, Process32FirstW, Process32NextW, PROCESSENTRY32W, TH32CS_SNAPPROCESS,
 };
-use windows::Win32::System::ProcessStatus::{K32GetPerformanceInfo, PERFORMANCE_INFORMATION};
+use windows::Win32::System::ProcessStatus::{GetPerformanceInfo, PERFORMANCE_INFORMATION};
 use windows::Win32::System::Registry::{
     RegCloseKey, RegOpenKeyExW, RegQueryValueExW, HKEY, HKEY_LOCAL_MACHINE, KEY_READ, REG_NONE,
 };
@@ -171,8 +171,8 @@ impl SystemInner {
             }
             if refresh_kind.swap() {
                 let mut perf_info: PERFORMANCE_INFORMATION = zeroed();
-                if K32GetPerformanceInfo(&mut perf_info, size_of::<PERFORMANCE_INFORMATION>() as _)
-                    .as_bool()
+                if GetPerformanceInfo(&mut perf_info, size_of::<PERFORMANCE_INFORMATION>() as _)
+                    .is_ok()
                 {
                     let page_size = perf_info.PageSize as u64;
                     let physical_total = perf_info.PhysicalTotal as u64;
